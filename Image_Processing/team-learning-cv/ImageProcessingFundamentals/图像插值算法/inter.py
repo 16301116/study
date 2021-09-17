@@ -2,7 +2,7 @@ import cv2
  
 if __name__ == "__main__":
     img = cv2.imread('yuner.jpg', 1)
-    
+    # img = cv2.imread('ImageProcessingFundamentals/图像插值算法/yuner.jpg',cv2.IMREAD_UNCHANGED)
     print('Original Dimensions : ',img.shape)
     
     scale_percent = 30       # percent of original size
