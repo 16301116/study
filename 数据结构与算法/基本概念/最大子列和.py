@@ -9,18 +9,6 @@ def random_int_list(start, stop, length):
         random_list.append(random.randint(start, stop))
     return random_list
  
-def main():
-    N = 1000
-    A = random_int_list(-20, 20, N)
-    # print(A)
-    maxsum = MAXSUBSEQSUM1(A, N)
-    maxsum2= MAXSUBSEQSUM2(A, N)
-    maxsum3= MAXSUBSEQSUM3(A, N)
-    #分别用三种算法实现并输出结果
-    print(maxsum)
-    print(maxsum2)
-    print(maxsum3)
- 
 #用最基础的方法来实现最大子列和，算法复杂度O（N*N*N）
 def MAXSUBSEQSUM1(A, N):
     ThisSum, MaxSum = 0, 0
@@ -42,9 +30,43 @@ def MAXSUBSEQSUM2(A, N):
             if ThisSum > MaxSum:
                 MaxSum = ThisSum
     return MaxSum
+
+#分而治之，采用二分法，算法复杂度O（N*logN）
+def MAXSUBSEQSUM3(A):
+    MaxSum = 0
+    if len(A)<=1:
+        MaxSum = A[0]
+        return MaxSum
+
+    mid = len(A)//2
+
+    leftA=A[:mid]
+    rightA=A[mid:]
+
+    leftMaxSum = MAXSUBSEQSUM3(leftA)#递归求左边的最大序列和
+    leftAfinal = 0#用于左边的最后一个数的累加求和
+    leftAfinalMax = -float('Inf')
+    for i in range(0,len(leftA))[::-1]:
+        leftAfinal = leftAfinal+leftA[i]
+        if leftAfinal > leftAfinalMax:
+            leftAfinalMax = leftAfinal
+
+    rightMaxSum = MAXSUBSEQSUM3(rightA)#递归求右边的最大序列和
+    rightAfinal = 0#用于右边的最后一个数的累加求和
+    #考虑到序列为负数的情况，所以初始化为负无穷
+    rightAfinalMax = -float('Inf')
+    for j in range(0,len(rightA)):
+        rightAfinal = rightAfinal+rightA[j]
+        if rightAfinal > rightAfinalMax:
+            rightAfinalMax = rightAfinal
  
-#在线处理算法 复杂度O（N*logN）
-def MAXSUBSEQSUM3(A, N):
+    crossMaxSum = leftAfinalMax + rightAfinalMax
+    MaxSum = max(crossMaxSum, leftMaxSum, rightMaxSum)
+
+    return MaxSum
+
+#在线处理算法 复杂度O（N）
+def MAXSUBSEQSUM4(A, N):
     ThisSum, MaxSum = 0, 0
     for i in range(N):
         ThisSum += A[i]  #向右累加
@@ -54,4 +76,16 @@ def MAXSUBSEQSUM3(A, N):
             ThisSum=0     #则不可能使后面的部分和增大，则该抛弃掉
     return MaxSum
  
-main()
+if __name__ == '__main__':
+    N = 10
+    A = random_int_list(-20, 20, N)
+    # print(A)
+    maxsum1 = MAXSUBSEQSUM1(A, N)
+    maxsum2 = MAXSUBSEQSUM2(A, N)
+    maxsum3 = MAXSUBSEQSUM3(A)
+    maxsum4 = MAXSUBSEQSUM4(A, N)
+    #分别用四种算法实现并输出结果
+    print(maxsum1)
+    print(maxsum2)
+    print(maxsum3)
+    print(maxsum4)
